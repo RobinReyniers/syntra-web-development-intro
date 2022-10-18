@@ -1,22 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <form class="search-form">
+      <input type="text" class="search" placeholder="City or State" />
+      <ul class="suggestions">
+        <li>Filter for a city</li>
+        <li>or a state</li>
+      </ul>
+    </form>
+    <script>
+      const endpoint =
+        "https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json";
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+      const input = document.querySelector(".search");
+      const suggestions = document.querySelector(".suggestions");
+      const cities = [];
 
-</script>
-</body>
+      const promise = fetch(endpoint);
+
+      promise
+        .then((data) => {
+          return data.json();
+        })
+        .then((data) => {
+          console.log(data);
+          data.forEach((data) => {
+            cities.push(data.city);
+            cities.push(data.state);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      console.log(cities);
+
+      function display(e) {
+        const filteredCities = cities.filter((city) => {
+          cities.includes(e.target.value);
+          cities.includes(e.target.value);
+        });
+
+        return filteredCities;
+      }
+      input.addEventListener("keyup", display);
+    </script>
+  </body>
 </html>
