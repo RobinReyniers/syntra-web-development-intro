@@ -201,37 +201,59 @@
 //     5. The user can play the game as long as they want to
 //  */
 
+let userScore = 0;
 const enterNumber = () => {
   return new Promise((resolve, reject) => {
     let userInput = prompt("Enter a number. (1 - 6)");
-    let randomNumber = Math.floor(Math.random() * 6);
+    let randomNumber = Math.floor(Math.random() * 6 + 1);
+    if (isNaN(userInput)) {
+      reject(new Error("Not a number"));
+    }
     if (parseInt(userInput) === randomNumber) {
       resolve("You get + 2 points");
+      userScore + 2;
     }
     if (parseInt(userInput) === randomNumber + 1) {
       resolve("You get + 1 points");
+      userScore++;
     }
     if (parseInt(userInput) === randomNumber - 1) {
       resolve("You get + 1 points");
+      userScore++;
     }
 
     resolve("You get 0 points");
   });
 };
 
-enterNumber().then((v) => {
-  alert(v);
-});
-
 const continueGame = () => {
-  return new Promise((resolve, reject) => {
-    let playAgain = prompt("Do you want to play again?");
-    if (playAgain) {
-      resolve();
+  return new Promise((resolve) => {
+    if (window.confirm("Do you want to play again?")) {
+      resolve(true);
     } else {
-      reject();
+      resolve(false);
     }
   });
 };
-continueGame().then(enterNumber());
-const handleGuess = () => {};
+
+const handleGuess = () => {
+  enterNumber()
+    .then((v) => {
+      alert(v);
+    })
+    .then(() => {
+      alert(`You have ${userScore} points total!`);
+
+      continueGame().then((result) => {
+        if (result) {
+          handleGuess();
+        } else {
+          alert("Thanks for playing!");
+        }
+      });
+    })
+    .catch((err) => {
+      alert("error");
+    });
+};
+handleGuess();
