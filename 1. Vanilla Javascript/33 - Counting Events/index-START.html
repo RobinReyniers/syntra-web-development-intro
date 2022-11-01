@@ -20,20 +20,51 @@
       // 3. Promisify the following function
       function clicked() {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", "https://api.countapi.xyz/hit/simontemmerman.com/awesomeclick");
+        xhr.open(
+          "GET",
+          "https://api.countapi.xyz/hit/simontemmerman.com/awesomeclick"
+        );
         xhr.responseType = "json";
         xhr.onload = function () {
           //2. Set the count in the counter section
+          counter.innerHTML = this.response.value;
           alert(`This button has been clicked ${this.response.value} times!`);
         };
         xhr.send();
       }
       // 3. Rewrite the function to use the fetch API
 
+      const button = document.getElementById("count");
+      const counter = document.getElementById("counter");
+
+      function buttonClicked() {
+        promise.then((data) => {});
+        data.value++;
+        counter.innerText = data.value;
+      }
+
+      button.addEventListener("click", clicked);
       // 4. When the page loads, get the number of clicks already registered for your page
       // https://api.countapi.xyz/info/simontemmerman.com/awesomeclick
+      const loadPromise = fetch(
+        "https://api.countapi.xyz/info/simontemmerman.com/awesomeclick"
+      );
+      function initialClicks() {}
+
+      loadPromise
+        .then((data) => {
+          return data.json();
+        })
+        .then((data) => {
+          counter.innerText = data.value;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
       // 5. Promisify the initialClicks function
+
+      // 6. Implement the same thing with localstorage
     </script>
   </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Counting Events with the Count API</title>
+    <title>Superheroes are cool</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -17,28 +17,80 @@
       //2. Create an API Key and add valid domain *
       //3. Store your public Api Key here
       const ts = 1;
-      const publicKey = "";
+      const publicKey = "b8239b826dc6d752ed091a392c276a78";
       //4. Get the md5 hash of ts-privateKey-publicKey via here: https://www.md5hashgenerator.com/
-      const hash = "";
+      const hash = "ff5ce42447571e197fae4fd3e9308d3c";
 
       //5. Create a function that takes in the thumbnail of a hero
       // and creates a path to the full image (see here: https://developer.marvel.com/documentation/images)
-      function getImage() {}
+
+      function getImage(thumbnail, extension) {
+        return `${thumbnail}/portrait_medium.${extension}`;
+      }
 
       //6. Write a function called render that
       // a. fetch to get all the heroes from the api and displays them on the page
       // b. Store those heroes in localStorage
       // c. Selects all the heroes rendered and attaches a click handler that alerts the comics
-      function render() {
-        //https://gateway.marvel.com/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}
+      const heroes = document.querySelector(".heroes");
+
+      function comics() {
+        const superHeroes = JSON.parse(localStorage.getItem("heroes"));
+        const findHero = superHeroes.find(
+          (hero) => hero.id === parseInt(this.dataset.heroId)
+        );
+        const heroComics = findHero.comics.items;
+        const allComics = heroComics.map((item) => item.name);
+        alert(`${allComics}`);
+        // let loc = window.location;
+        // let url = loc.protocol + "//" + loc.host + loc.pathname + loc.search;
+        // let param = findHero.id;
+        // idUrl = url += "?" + "id" + "=" + findHero.id;
+        // console.log(idUrl);
+        // window.open(
+        //   "javascript:location.href='C:\Users\robin_g12wxww\Documents\Syntra\Frontend2\syntra-web-development-intro\1. Vanilla Javascript\34 - Superheroes are cool\index-START2.html/index-START2.html'",
+        //   "_blank"
+        // );
       }
 
+      function render() {
+        //https://gateway.marvel.com/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}
+        return fetch(
+          `https://gateway.marvel.com/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}`
+        )
+          .then((data) => {
+            return data.json();
+          })
+          .then((data) => {
+            console.log(data);
+            return data.data.results;
+          })
+          .then((data) => {
+            console.log(data);
+            localStorage.setItem("heroes", JSON.stringify(data));
+            return data;
+          })
+          .then((hero) => {
+            return (mappedHeroes = hero.map((hero) => cardFactory(hero)));
+          })
+          .then((data) => {
+            heroes.insertAdjacentHTML("beforeend", data);
+            console.log(heroes.innerHTML);
+          })
+          .then(() => {
+            const heroes = document.querySelectorAll(".hero");
+            heroes.forEach((hero) => hero.addEventListener("click", comics));
+          });
+      }
+
+      render();
       //7. Use this factory to show the name and image of every hero you fetch
-      function cardFactory() {
+      function cardFactory(hero) {
         return `
-        <section class="hero" data-hero-id="1">
-          <img src="http://i.annihil.us/u/prod/marvel/i/mg/3/20/5232158de5b16.jpg" />
-          <span>Name</span>
+        <section class="hero" data-hero-id="${hero.id}">
+          <img src=${getImage(hero.thumbnail.path, hero.thumbnail.extension)} />
+          <span>${hero.name}</span>
+          <a href='details-FINISHED.html?q=${hero.id}'>Details</a>
         </section>
         `;
       }

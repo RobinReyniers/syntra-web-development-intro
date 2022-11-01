@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Details</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <h1>Hero</h1>
+    <span class="banner"></span>
+    <span class="comics">
+      <h1>Comics</h1>
+      <ul class="comics-list"></ul>
+    </span>
+
+    <script>
+      const banner = document.querySelector(".banner");
+      const comics = document.querySelector(".comics-list");
+
+      function getImage(thumbnail, extension) {
+        return `${thumbnail}/portrait_xlarge.${extension}`;
+      }
+
+      function renderComics() {
+        const id = window.location.search;
+        const params = new URLSearchParams(id);
+        const q = parseInt(params.get("q"));
+        const heroes = JSON.parse(localStorage.getItem("heroes"));
+        const findHero = heroes.find((hero) => hero.id === q);
+
+        banner.innerHTML = `
+        <span class='hero-banner' >${findHero.name}</span>  <br>
+        <img src=${getImage(
+          findHero.thumbnail.path,
+          findHero.thumbnail.extension
+        )} />`;
+
+        const heroComics = findHero.comics.items;
+        const allComics = heroComics.map((item) => item.name);
+
+        // let listMap = allComics.map(
+        //   (comic) => (comics.innerHTML = `<li>${heroComics.name}</li>`)
+        // );
+        // console.log(listMap);
+        for (let i = 0; i < allComics.length; i++) {
+          comics.insertAdjacentHTML("beforeend", `<li>${allComics[i]}</li>`);
+        }
+        // comics.innerHTML = `<li>${allComics}</li>`;
+
+        let seriesLink = document.createElement("h2");
+        seriesLink.innerHTML = `Want to know more about this hero? click <a href=series-FINISHED.html?q=${findHero.id}>Here</a> !`;
+        document.body.appendChild(seriesLink);
+      }
+
+      renderComics();
+    </script>
+  </body>
+</html>
