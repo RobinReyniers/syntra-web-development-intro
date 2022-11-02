@@ -15,6 +15,9 @@
       <ul class="series-list"></ul>
     </span>
     <script>
+      const ts = 1;
+      const publicKey = "b8239b826dc6d752ed091a392c276a78";
+      const hash = "ff5ce42447571e197fae4fd3e9308d3c";
       const banner = document.querySelector(".banner");
       const series = document.querySelector(".series-list");
 
@@ -23,29 +26,47 @@
       }
 
       function renderSeries() {
-        const id = window.location.search;
-        const params = new URLSearchParams(id);
-        const q = parseInt(params.get("q"));
-        const heroes = JSON.parse(localStorage.getItem("heroes"));
-        const findHero = heroes.find((hero) => hero.id === q);
-
-        banner.innerHTML = `
+        return fetch(
+          `https://gateway.marvel.com/v1/public/characters?ts=${ts}&apikey=${publicKey}&hash=${hash}`
+        )
+          .then((data) => {
+            return data.json();
+          })
+          .then((data) => {
+            return data.data.results;
+          })
+          .then((heroes) => {
+            console.log(heroes);
+            const id = window.location.search;
+            console.log(id);
+            const params = new URLSearchParams(id);
+            console.log(params);
+            const q = parseInt(params.get("q"));
+            console.log(q);
+            const findHero = heroes.find((hero) => hero.id === q);
+            console.log(findHero);
+            const mappedHeroes = heroes.map((hero) => {
+              banner.innerHTML = `
           <span class='hero-banner' >${findHero.name}</span>  <br>
           <img src=${getImage(
             findHero.thumbnail.path,
             findHero.thumbnail.extension
           )} />`;
+            });
 
-        const heroSeries = findHero.series.items;
-        const allSeries = heroSeries.map((item) => item.name);
+            const heroSeries = findHero.series.items;
+            console.log(heroSeries);
+            console.log(heroSeries[0].name);
+            const allSeries = heroSeries.map((item) => item.name);
+            console.log(allSeries);
+            const seriesList = heroSeries.map((serie) => {
+              series.insertAdjacentHTML("beforeend", `<li>${serie.name}</li>`);
+            });
 
-        for (let i = 0; i < allSeries.length; i++) {
-          series.insertAdjacentHTML(
-            "beforeend",
-            `
-            <li>${allSeries[i]}</li>`
-          );
-        }
+            let homeLink = document.createElement("h2");
+            homeLink.innerHTML = `Click <a href=index-START.html>Here</a> to go back to the homepage.`;
+            document.body.appendChild(homeLink);
+          });
       }
       renderSeries();
     </script>

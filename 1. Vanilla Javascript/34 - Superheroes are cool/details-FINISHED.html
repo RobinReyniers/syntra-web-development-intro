@@ -39,18 +39,12 @@
 
         const heroComics = findHero.comics.items;
         const allComics = heroComics.map((item) => item.name);
-
-        // let listMap = allComics.map(
-        //   (comic) => (comics.innerHTML = `<li>${heroComics.name}</li>`)
-        // );
-        // console.log(listMap);
-        for (let i = 0; i < allComics.length; i++) {
-          comics.insertAdjacentHTML("beforeend", `<li>${allComics[i]}</li>`);
-        }
-        // comics.innerHTML = `<li>${allComics}</li>`;
+        const comicList = heroComics.map((comic) => {
+          comics.insertAdjacentHTML("beforeend", `<li>${comic.name}</li>`);
+        });
 
         let seriesLink = document.createElement("h2");
-        seriesLink.innerHTML = `Want to know more about this hero? click <a href=series-FINISHED.html?q=${findHero.id}>Here</a> !`;
+        seriesLink.innerHTML = `Want to know about the series of this hero? click <a href=series-FINISHED.html?q=${findHero.id}>Here</a> !`;
         document.body.appendChild(seriesLink);
       }
 
