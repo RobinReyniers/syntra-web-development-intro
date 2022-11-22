@@ -24,9 +24,37 @@
 */
 
 class LinkedList {
-  // code goes here
+  constructor() {
+    this.length = 0;
+    this.head = this.tail = null;
+  }
+
+  get length() {
+    return this.length;
+  }
+
+  push(value) {
+    const newNode = new Node(value);
+    if (this.length === 0) {
+      this.head = newNode;
+    } else {
+      this.tail.next = newNode;
+    }
+    this.tail = newNode;
+  }
+
+  serialize() {
+    const array = [];
+    while (this.head.next) {}
+    return [];
+  }
 }
 
 class Node {
-  // code goes here
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+  }
 }
+
+window.LinkedList = LinkedList();
