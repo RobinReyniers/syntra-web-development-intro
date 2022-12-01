@@ -127,15 +127,21 @@ class InputHandler {
 
   #initNavSelection() {
     const navItems = document.querySelectorAll(".nav-selection");
-    navItems.forEach((i) => i.addEventListener("click", this.#handlers.navSelection));
+    navItems.forEach((i) =>
+      i.addEventListener("click", this.#handlers.navSelection)
+    );
   }
 
   initBookHandlers() {
     const collectBooks = document.querySelectorAll(".collect");
     const returnBooks = document.querySelectorAll(".return");
 
-    collectBooks.forEach((button) => button.addEventListener("click", console.log));
-    returnBooks.forEach((button) => button.addEventListener("click", console.log));
+    collectBooks.forEach((button) =>
+      button.addEventListener("click", console.log)
+    );
+    returnBooks.forEach((button) =>
+      button.addEventListener("click", console.log)
+    );
   }
 }
 
@@ -207,8 +213,13 @@ class App {
       search: (e) => {
         const searchTerm = e.target.querySelector("[name=search]").value;
         this.#ui.clear(".books");
-        const books = this.#fantasySection.search(this.lookingAtBooks, searchTerm);
-        books.forEach((book) => this.#ui.append(".books", this.#ui.bookCard(book)));
+        const books = this.#fantasySection.search(
+          this.lookingAtBooks,
+          searchTerm
+        );
+        books.forEach((book) =>
+          this.#ui.append(".books", this.#ui.bookCard(book))
+        );
         this.#input.initBookHandlers();
       },
       navSelection: (e) => {
@@ -216,7 +227,9 @@ class App {
         this.lookingAtBooks = type;
         this.#ui.clear(".books");
         const books = this.#fantasySection[this.lookingAtBooks];
-        books.forEach((book) => this.#ui.append(".books", this.#ui.bookCard(book)));
+        books.forEach((book) =>
+          this.#ui.append(".books", this.#ui.bookCard(book))
+        );
         this.#input.initBookHandlers();
       },
     });
