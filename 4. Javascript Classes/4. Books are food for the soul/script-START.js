@@ -1,169 +1,164 @@
 class LibrarySection {
   constructor() {
-    this._books;
+    this.books = [];
   }
 
-  search(type, term) {
-    return this[type].filter((book) => {
-      return book.title.toLowerCase().includes(term.toLowerCase());
-    });
+  search(term) {
+    return this.books.filter((book) =>
+      book.author.toLowerCase().includes(term.toLowerCase())
+    );
   }
 
   get all() {
-    return this._books;
+    return this.books;
   }
 
   get available() {
-    return this._books.filter((book) => {
-      return book.inStock >= book.borrowed;
-    });
+    return this.books.filter((book) => book.inStock > 0);
   }
 
   get borrowed() {
-    return this._books.filter((book) => {
-      return book.borrowed && book.borrowed >= book.returned;
+    return this.books.filter((book) => book.borrowed > 0);
+  }
+
+  borrow(isbn) {
+    this.books.map((book) => {
+      if (book.ISBN === isbn) {
+        book.borrowed++;
+        book.inStock--;
+        return book;
+      }
     });
-  }
-
-  // collecting book from shelf
-  collectBook(bookTitle, author, borrow, quantity) {
-    // to arrive at the exact book, you have to spell correctly
-    const titleInRegex = new RegExp(bookTitle, "gi");
-    const authorInRegex = new RegExp(author, "gi");
-    const bookToUse = this.availableBooks.filter((book) => {
-      return titleInRegex.test(book.title) && authorInRegex.test(book.author);
-    })[0];
-
-    // reduce the number of stocked books by one
-    if (bookToUse && quantity <= bookToUse.inStock) {
-      bookToUse.inStock -= quantity;
-      borrow ? (bookToUse.borrowed += 1) : (bookToUse.reading += quantity);
-      return bookToUse.bookPlacement;
-    } else {
-      return "Out of stock";
-    }
-  }
-
-  // returning book back to shelf
-  returnBooks(ISBN, quantity) {
-    const bookToReturn = this.allBookedBooks.filter((bookedBook) => {
-      return bookedBook.ISBN === ISBN;
-    })[0];
-
-    if (bookToReturn && quantity <= bookToReturn.reading) {
-      bookToReturn.inStock += quantity;
-      bookToReturn.reading -= quantity;
-      return bookToReturn.bookPlacement;
-    } else {
-      return "Not collected in the quantity provided";
-    }
   }
 }
 
-class FantasySection extends LibrarySection {
-  #app;
-
-  constructor(app) {
+class DramaSection extends LibrarySection {
+  constructor() {
     super();
-    this.#app = app;
-    // accessing this array directly will lead to CONFUSION
-    this._books = [
+    this.books = [
       {
-        title: "Another Book",
-        author: "Raymond E. Feist",
-        ISBN: 4029,
+        title: "50 shades of Gray",
+        author: "Vertonghen",
+        ISBN: 120948,
         inStock: 20,
-        bookPlacement: "Fantasy|200|1",
-        reading: 0,
+        bookPlacement: "Drama|200|1",
         borrowed: 0,
-        returned: 0,
-        cover: "https://img.fruugo.com/product/4/85/75541854_max.jpg",
-        desc: "This is a very long description detailing the book plot.",
+        cover: "url",
+        description: "This book is about 50 shades of Gray",
       },
       {
-        title: "The Magician",
-        author: "Raymond E. Feist",
-        ISBN: 4030,
-        inStock: 20,
-        bookPlacement: "Fantasy|200|1",
-        reading: 0,
-        borrowed: 0,
-        returned: 0,
-        cover: "https://img.fruugo.com/product/4/85/75541854_max.jpg",
-        desc: "This is a very long description detailing the book plot.",
-      },
-      {
-        title: "The Magician",
-        author: "Raymond E. Feist",
-        ISBN: 4031,
+        title: "50 shades of Gray",
+        author: "Vertonghen",
+        ISBN: 120948,
         inStock: 18,
-        bookPlacement: "Fantasy|200|1",
-        reading: 0,
-        borrowed: 20,
-        returned: 0,
-        cover: "https://img.fruugo.com/product/4/85/75541854_max.jpg",
-        desc: "This is a very long description detailing the book plot.",
+        bookPlacement: "Drama|200|1",
+        borrowed: 2,
+        cover: "url",
+        description: "This book is about 50 shades of Gray",
+      },
+      {
+        title: "50 shades of Gray",
+        author: "Vertonghen",
+        ISBN: 120948,
+        inStock: 0,
+        bookPlacement: "Drama|200|1",
+        borrowed: 0,
+        cover: "url",
+        description: "This book is about 50 shades of Gray",
       },
     ];
   }
 }
 
-class UI {
+// This class will tie everything together
+class Library {
+  constructor() {
+    const dramaBooks = new DramaSection();
+    const state = {
+      books: dramaBooks.all,
+    };
+
+    document.querySelectorAll(".nav-selection").forEach((nav) => {
+      nav.addEventListener("click", (e) => {
+        const type = e.target.parentNode.dataset.bookType;
+        this.state.books = dramaBooks[type];
+      });
+    });
+
+    this.state = new Proxy(state, {
+      set: this.update,
+    });
+    this.bookList = new BookList(this.state);
+  }
+
+  update = (target, property, value) => {
+    // Allow the update to happen
+    target[property] = value;
+
+    if (property === "books") {
+      this.bookList.render();
+    }
+  };
+}
+
+class BookList {
+  // Based on the state of the library, we show the books
+  constructor(state) {
+    this.state = state;
+    //  Select the element in the DOM, and append the books.
+    this.bookContainer = document.querySelector(".books");
+    state.books.forEach((book) => {
+      const bookInstance = new Book(book);
+      this.bookContainer.appendChild(bookInstance.el);
+    });
+  }
+
+  render() {
+    // Clear the UI
+    this.bookContainer.innerHTML = "";
+    // Build the UI up again
+
+    this.state.books.forEach((book) => {
+      const bookInstance = new Book(book);
+      this.bookContainer.appendChild(bookInstance.el);
+    });
+  }
+}
+
+// Responsible for shape of a book in te application (HTML)
+class Book {
+  constructor(book) {
+    this.book = book;
+  }
+
+  get el() {
+    return this.#htmlToElement(this.#bookCard());
+  }
+
   #htmlToElement(htmlString) {
     const template = document.createElement("template");
-    htmlString = htmlString.trim(); // Never return a text node of whitespace as the result
+    htmlString = htmlString.trim();
     template.innerHTML = htmlString;
     return template.content.firstChild;
   }
 
-  append(selector, html) {
-    const article = this.#htmlToElement(html);
-    return document.querySelector(selector).append(article);
-  }
-
-  bookCard(book) {
+  #bookCard() {
     return `
-    <article class="book">
-      <img src="${book.cover}" />
-      <section>
-        <h3>${book.title}</h3>
-        <h5>${book.author}</h5>
-        <p>${book.desc}</p>
-        <section>
-          <p>In Stock: <b>${book.inStock}</b></p>
-          <button class="collect" data-id="${book.ISBN}">Collect</button>
-          <button class="return" data-id="${book.ISBN}">Return</button>
-        </section>
-      </section>
-    </article>
-    `;
+    <article class='book'>
+    <img src='${this.book.cover}'></img>
+    <section>${this.book.title}
+    <h5>${this.book.author}</h5>
+    <p>${this.book.description}</p>
+    <section>
+    <p>${this.book.inStock}</p>
+    <button class='collect' data-id='${this.book.ISBN}'>Collect</button>
+    <button class='return' data-id='${this.book.ISBN}>Return</button>
+    </section>
+    </section>
+    </article>`;
   }
 }
 
-class Handlers {
-  #handlers;
-  constructor() {
-    this.#handlers = handlers;
-    this.#navSelection();
-  }
+window.DramaSection = DramaSection;
 
-  #navSelection() {
-    const navSelection = document.querySelector(".nav-selection");
-  }
-}
-
-class App {
-  #fantasySection;
-  #ui;
-  constructor() {
-    this.#fantasySection = new FantasySection();
-    this.#ui = new UI();
-  }
-  bootstrap() {
-    const books = this.#fantasySection.all;
-    books.forEach((book) => this.#ui.append(".books", this.#ui.bookCard(book)));
-  }
-}
-
-const app = new App();
-app.bootstrap();
+const app = new Library();

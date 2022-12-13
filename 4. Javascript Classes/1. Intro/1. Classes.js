@@ -5,6 +5,120 @@ console.log("~~~~~~~~~~~~~~TASK 1~~~~~~~~~~~~~~");
  * Some examples: furniture, animal, chair, teacher, student, person, tree, movie,...
  */
 
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  greet() {
+    console.log("Hello, " + this.name + "is my name");
+  }
+
+  changename(newName) {
+    this.name = newName;
+    console.log("Hello, my new name is" + this.name);
+  }
+}
+
+class Table {
+  constructor(legs, width, height) {
+    this.legs = legs;
+    this.width = width;
+    this.heigth = height;
+  }
+}
+
+class Tree {
+  constructor(age, species, height) {
+    this.age = age;
+    this.price = "€ 25000";
+    this.height = height;
+    this.species = species;
+  }
+
+  changePrice(newPrice) {
+    this.price = newPrice;
+  }
+}
+
+class Chair {
+  constructor(legs, color) {
+    this.legs = legs;
+    this.color = color;
+  }
+}
+
+class Dog {
+  constructor(name, age, vaccinated) {
+    this.name = name;
+    this.age = age;
+    this.vaccinated = vaccinated;
+  }
+
+  get name() {
+    console.log(this.name);
+    return this.name;
+  }
+
+  get age() {
+    console.log(this.age);
+    return this.age;
+  }
+
+  bark() {
+    console.log("bark!");
+  }
+
+  dogBreed() {
+    console.log("This dog is a" + this.breed);
+    return this.breed;
+  }
+}
+
+class Pomeranian extends Dog {
+  constructor(name) {
+    super(name);
+    this.breed = "Pomeranian";
+  }
+}
+
+class Corgi extends Dog {
+  constructor(name) {
+    super(name);
+  }
+
+  herd() {
+    console.log("herd");
+  }
+
+  bark(name) {
+    console.log("woof," + name);
+  }
+
+  dogBreed(breed)
+}
+
+class Word {
+  constructor(word) {
+    this.word = word;
+  }
+
+  getWordOfDay() {}
+
+  checkWord() {}
+}
+
+class WeatherService {
+  constructor(apiEndPoint, region) {
+    this.apiEndPoint = apiEndPoint;
+    this.region = region;
+  }
+
+  getTemperature() {
+    fetch(this.apiEndPoint);
+  }
+}
 console.log("~~~~~~~~~~~~~~TASK 2~~~~~~~~~~~~~~");
 /**
  * Initialize all those classes you defined above using the new keyword.
@@ -43,4 +157,83 @@ console.log("~~~~~~~~~~~~~~TASK 6~~~~~~~~~~~~~~");
     .square()
     .display();
  */
-class Calculator {}
+class Calculator {
+   constructor() {
+      this.total = 0
+   }
+
+   add(number) {
+      this.total += number
+      return this
+   }
+
+   subtract(number) {
+      this.total -= number
+      return this
+   }
+
+   Multiply(number) {
+      this.total * number
+      return this
+   }
+
+   divide(number) {
+      this.total / number
+      return this
+   }
+
+   square(number) {
+      this.total ** number
+   }
+
+   display() {
+      return this.total
+   }
+
+   reset() {
+      this.total = 0
+      return this
+   }
+}
+
+const calc = new Calculator()
+
+class Stack {
+   #stack
+   constructor() {
+      this.#stack = []
+   }
+
+   add(item) {
+      this.#stack.push(item)
+   }
+
+   remove(item) {
+       return this.#stack.pop(item)
+   }
+
+   peek() {
+      return this.#stack[this.stack.length - 1]
+   } 
+
+}
+
+class queue {
+  constructor() {
+    this.storage = []
+  }
+
+  enqueue(item) {
+    this.storage.push(item)
+  }
+
+  dequeue() {
+     return this.storage.shift(item)
+  }
+
+  peek() {
+    return this.storage[this.storage.length - 1]
+  }
+}
+
+
