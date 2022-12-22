@@ -53,14 +53,32 @@
       </form>
     </div>
 
+    <script src="LocalStorage.js"></script>
     <script>
       class LocalStorage {
         constructor() {
           this.storage = window.localStorage;
         }
 
+        #getFromLocalStorage(key) {
+          const value = window.localStorage.getItem(key);
+          try {
+            return (value = JSON.parse(value));
+          } catch (err) {}
+
+          return value;
+        }
+
+        isDefined(value) {
+          return value !== undefined || value !== null || value !== NaN;
+        }
+
         get(key) {
-          return JSON.parse(localStorage.getItem(key) || []);
+          // return JSON.parse(localStorage.getItem(key) || []);
+          if (typeof keys === "string") return this.#getFromLocalStorage(keys);
+          return Object.entries(keys).reduce((values, [key, defaultValue]) => {
+            values[key] = this.#getFromLocalStorage(key) || defaultValue;
+          }, {});
         }
 
         getAll() {
@@ -74,15 +92,22 @@
           return archive;
         }
 
-        set(inputValue) {
-          localStorage.setItem(
-            this.storage.length + 1,
-            JSON.stringify(inputValue)
-          );
+        set(keys) {
+          for (let [key, value] of Object.entries(keys)) {
+            if (typeof value === "object") {
+              value = JSON.stringify(value);
+            }
+            window.localStorage.setItem(key, value);
+          }
         }
+        // localStorage.setItem(this.storage.length + 1, JSON.stringify(inputValue));
 
-        remove(keyName) {
-          window.localStorage.removeItem(keyName);
+        remove(key) {
+          if (this.#getFromLocalStorage(key)) {
+            window.localStorage.removeItem(key);
+          } else {
+            throw new Error("No key found");
+          }
         }
 
         clear() {
