@@ -1,7 +1,14 @@
 class TodoService {
   constructor() {
     this.baseUrl = "http://localhost:3000";
-    this.allowedFields = ["todo", "id", "dueDate", "priority", "status", "category"];
+    this.allowedFields = [
+      "todo",
+      "id",
+      "dueDate",
+      "priority",
+      "status",
+      "category",
+    ];
   }
 
   #validateTodo = (todo) => {
@@ -71,4 +78,4 @@ class Todo {
 }
 
 window.todoService = new TodoService();
-window.todo = Todo;
+window.todo = new Todo();
